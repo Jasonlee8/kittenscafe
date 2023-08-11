@@ -56,16 +56,23 @@ export default function Register() {
     })
   }
 
+  const checkValidEmail = (email) => {
+    let format = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+    if (email && format) {
+      return true
+    }
+  }
+
   const onSubmit = async () => {
     setValues({
       ...values,
       invalidFirstname: !values.firstname ? true : false,
       invalidLastname: !values.lastname ? true : false,
-      invalidEmail: !values.email ? true : false,
+      invalidEmail: !checkValidEmail(values.email) ? true : false,
       invalidPassword: !values.password ? true : false,
     })
 
-    if (values.firstname && values.lastname && values.email && values.password) {
+    if (values.firstname && values.lastname && checkValidEmail(values.email) && values.password) {
       await handleRegister({
         first_name: values.firstname,
         last_name: values.lastname,
