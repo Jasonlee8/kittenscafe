@@ -60,3 +60,9 @@ export const SubmitBtn = styled(Button)`
           margin: 0;
         }
       `
+
+export const ErrorMsg = styled.p`
+      margin: 0;
+      color: red;
+      font-size: 14px;
+    `

@@ -48,7 +48,6 @@ export default function Cart() {
     window.location.reload()
   }
 
-  console.log(values.cartArr)
  
   const setOrderStatus = (cart) => {
     const recivingLimit = moment(cart.date, 'YYYY-MM-DDTHH:mm:ss.SSSZ').add(3, 'minutes');

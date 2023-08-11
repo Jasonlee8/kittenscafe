@@ -16,6 +16,9 @@ export function handleLoginApi(email, password) {
           reject (res.response)
         }
       })
+      .catch(error => {
+        reject(error);
+      })
   })
 }
 

@@ -27,7 +27,7 @@ export const HeaderDiv = styled.div`
 export const RegiForm = styled.div`
         background-color: #E8E8E8;
         width: 30rem;
-        height: 33.8rem;
+        height: auto;
         margin: auto;
         margin-top: 6.2rem;
         border-radius: 1rem;
@@ -42,7 +42,7 @@ export const RegiForm = styled.div`
 export const RegiContext = styled.div`
         background-color: #E8E8E8;
         width: 20rem;
-        height: 20rem;
+        height: auto;
         margin: auto;
         @media (max-width: 767px) {
           width: 90%;
@@ -71,4 +71,10 @@ export const RegiButton = styled(Button)`
         @media (max-width: 767px) {
           margin: 0;
         }
+      `
+
+export const ErrorMsg = styled.p`
+        margin: 0;
+        color: red;
+        font-size: 14px;
       `

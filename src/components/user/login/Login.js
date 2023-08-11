@@ -3,7 +3,7 @@ import {Form } from 'react-bootstrap'
 import NavBar from '../../navbar/Navbar'
 import Footer from '../../footer/Footer'
 import {LinkContainer} from 'react-router-bootstrap'
-import { LoginContainer, LoginDiv, HeaderDiv, LoginForm, BtnPanel, CancelBtn, SubmitBtn } from './styles';
+import { LoginContainer, LoginDiv, HeaderDiv, LoginForm, BtnPanel, CancelBtn, SubmitBtn, ErrorMsg } from './styles';
 import jwtDecode from 'jwt-decode';
 import { handleLoginApi } from '../../../api/UserApi';
 import { handleUserValue } from '../../../store/actions/userActions';
@@ -18,13 +18,14 @@ export default function Login() {
       email: '',
       password: '',
       errorMessage: '',
-      isLogin: false
+      isLogin: false,
+      invalidLogin: false,
     })
 
     const onChange = (e) => {
         setValues({
             ...values,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         })
     }
     
@@ -32,25 +33,48 @@ export default function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-      window.scrollTo({top: 0, behavior: 'instant'})
+      window.scrollTo({top: 0, behavior: 'instant'});
+
+      return () => {
+        setValues({
+          email: '',
+          password: '',
+          errorMessage: '',
+          isLogin: false,
+          invalidLogin: false,
+        })
+      }
     }, [])
 
     const onSubmit = async (e) => {
       e.preventDefault();
-      await handleLoginApi(values.email,values.password)
-      .then(response => {
-        values.isLogin = true;
-        localStorage.setItem('token', JSON.stringify(response));   
-        const decode = jwtDecode(response);
-        console.log(decode);
-        dispatch(handleUserValue(decode));
-        //dispatch(loginStatus(isLogin));
-        
-      })
-      .catch(function (error) {
-          console.log(error)
-      });
-      navigate('/menu')  
+      if (values.email && values.password) {
+        await handleLoginApi(values.email,values.password)
+        .then(response => {
+          values.isLogin = true;
+          localStorage.setItem('token', JSON.stringify(response));   
+          const decode = jwtDecode(response);
+          console.log(decode);
+          dispatch(handleUserValue(decode));
+          //dispatch(loginStatus(isLogin));
+          navigate('/menu');
+        })
+        .catch(function (error) {
+            if (error.response || error.message == 'Request failed with status code 404') {
+              setValues({
+                ...values,
+                invalidLogin: true,
+                errorMessage: 'Email or Password not match, please try again'
+              })
+            }
+        })
+      } else {
+        setValues({
+          ...values,
+          invalidLogin: (!values.email || !values.password) ? true : false,
+          errorMessage: 'Please type correct email or password'
+        })
+      }
     }
 
     return (
@@ -88,9 +112,13 @@ export default function Login() {
                             value={values.password}
                             onChange={onChange}  
                         />
-                        <Form.Text className="text-muted" variant="danger">
+                        {/* <Form.Text className="text-muted" variant="danger">
                             {values.errorMessage}
-                        </Form.Text>
+                        </Form.Text> */}
+                          {
+                            values.invalidLogin &&
+                            <ErrorMsg>{values.errorMessage}</ErrorMsg>
+                          }
                     </Form.Group>
 
                     <LinkContainer to="/register">
